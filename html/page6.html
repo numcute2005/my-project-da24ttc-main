@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+
+    <title>Thiết kế form</title>
+    <meta charset="utf-8">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/style6.css">
+
+</head>
+
+<body>
+
+    <div class="container mt-4">
+
+        <!-- Điều hướng -->
+        <nav>
+
+            <ol class="breadcrumb">
+
+                <li class="breadcrumb-item">
+                    <a href="#">Trang chủ</a>
+                </li>
+
+                <li class="breadcrumb-item active">
+                    Chi tiết sản phẩm
+                </li>
+
+            </ol>
+
+        </nav>
+
+
+
+        <!-- Danh sách sản phẩm -->
+        <div class="row g-4" id="product-list"></div>
+
+    </div>
+
+
+
+    <script>
+
+        const flowers = [
+
+            {
+                name: "Hoa hồng Pháp",
+                price: "230k / túi",
+                image: "../assests/images/rose1.jpg",
+                desc: "Hoa hồng thơm nhẹ, màu sắc rực rỡ."
+            },
+
+            {
+                name: "Hoa hướng dương",
+                price: "210k / túi",
+                image: "../assests/images/sunflower.jpg",
+                desc: "Hoa biểu tượng của sức sống."
+            },
+
+            {
+                name: "Hoa tulip",
+                price: "240k / túi",
+                image: "../assests/images/tulip.jpg",
+                desc: "Hoa sang trọng, nhiều màu sắc đẹp."
+            },
+
+            {
+                name: "Cẩm tú cầu",
+                price: "250k / túi",
+                image: "../assests/images/camtu.jpg",
+                desc: "Hoa mềm mại, thích hợp trang trí."
+            },
+
+            {
+                name: "Hoa lavender",
+                price: "260k / túi",
+                image: "../assests/images/lavender.jpg",
+                desc: "Hoa thơm dịu nhẹ, giúp thư giãn."
+            },
+
+            {
+                name: "Hoa baby",
+                price: "270k / túi",
+                image: "../assests/images/baby.jpg",
+                desc: "Hoa nhỏ xinh, trang trí cực đẹp."
+            },
+
+            {
+                name: "Hoa ly",
+                price: "280k / túi",
+                image: "../assests/images/ly.jpg",
+                desc: "Hoa sang trọng, hương thơm quyến rũ."
+            },
+
+            {
+                name: "Hoa sen",
+                price: "290k / túi",
+                image: "../assests/images/sen.jpg",
+                desc: "Quốc hoa Việt Nam, thanh khiết đẹp mắt."
+            }
+
+        ];
+
+
+
+        let html = "";
+
+        for(let i = 0; i < flowers.length; i++)
+        {
+            html += `
+
+            <div class="col-md-3">
+
+                <div class="card product-card shadow h-100">
+
+                    <img src="${flowers[i].image}"
+                    class="card-img-top product-image">
+
+                    <div class="card-body text-center">
+
+                        <h5 class="card-title">
+                            ${flowers[i].name}
+                        </h5>
+
+                        <p class="price">
+                            ${flowers[i].price}
+                        </p>
+
+                        <p>
+                            ${flowers[i].desc}
+                        </p>
+
+                        <button class="btn btn-success rounded-pill">
+                            Mua ngay
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            `;
+        }
+
+        document.getElementById("product-list").innerHTML = html;
+
+    </script>
+
+</body>
+
+</html>
