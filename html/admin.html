@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý sản phẩm – Flower Shop</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green-dark:  #1a3a2a;
+            --green-mid:   #2d6a4f;
+            --green-light: #52b788;
+            --cream:       #f8f4ed;
+            --gold:        #c9a84c;
+            --red-soft:    #e76f51;
+            --text-main:   #1a1a1a;
+            --text-muted:  #6b7280;
+            --border:      #d9d4c7;
+            --sidebar-w:   240px;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text-main); min-height: 100vh; display: flex; }
+
+        /* SIDEBAR */
+        .sidebar { width: var(--sidebar-w); background: var(--green-dark); min-height: 100vh; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; z-index: 100; }
+        .sidebar-brand { padding: 28px 24px 20px; border-bottom: 1px solid rgba(255,255,255,.1); }
+        .sidebar-brand h1 { font-family: 'Playfair Display', serif; color: var(--gold); font-size: 1.25rem; line-height: 1.3; }
+        .sidebar-brand span { color: rgba(255,255,255,.5); font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; }
+        .sidebar nav { padding: 16px 12px; flex: 1; }
+        .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 8px; color: rgba(255,255,255,.65); font-size: .9rem; cursor: pointer; transition: all .2s; margin-bottom: 4px; text-decoration: none; }
+        .nav-item:hover, .nav-item.active { background: rgba(255,255,255,.1); color: #fff; }
+        .nav-item .icon { font-size: 1.1rem; }
+        .sidebar-footer { padding: 16px 24px; border-top: 1px solid rgba(255,255,255,.1); color: rgba(255,255,255,.4); font-size: .75rem; }
+
+        /* MAIN */
+        .main { margin-left: var(--sidebar-w); flex: 1; padding: 32px 36px; min-height: 100vh; }
+        .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; }
+        .topbar h2 { font-family: 'Playfair Display', serif; font-size: 1.75rem; color: var(--green-dark); }
+        .topbar p { color: var(--text-muted); font-size: .9rem; margin-top: 2px; }
+
+        /* STATS */
+        .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
+        .stat-card { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; display: flex; align-items: center; gap: 16px; }
+        .stat-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0; }
+        .stat-icon.green  { background: #d8f3dc; }
+        .stat-icon.gold   { background: #fef3c7; }
+        .stat-icon.red    { background: #fde8e0; }
+        .stat-icon.purple { background: #ede9fe; }
+        .stat-label { font-size: .8rem; color: var(--text-muted); margin-bottom: 4px; }
+        .stat-val   { font-size: 1.6rem; font-weight: 700; color: var(--green-dark); }
+
+        /* TOOLBAR */
+        .toolbar { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+        .search-box { flex: 1; position: relative; }
+        .search-box input { width: 100%; border: 1px solid var(--border); border-radius: 8px; padding: 9px 14px 9px 38px; font-family: 'DM Sans', sans-serif; font-size: .9rem; background: #fff; outline: none; transition: border .2s; }
+        .search-box input:focus { border-color: var(--green-light); }
+        .search-box .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: .9rem; }
+        .btn-add { background: var(--green-mid); color: #fff; border: none; border-radius: 8px; padding: 9px 20px; font-family: 'DM Sans', sans-serif; font-size: .9rem; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 7px; transition: background .2s; white-space: nowrap; }
+        .btn-add:hover { background: var(--green-dark); }
+
+        /* TABLE */
+        .table-wrapper { background: #fff; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+        thead { background: var(--green-dark); color: #fff; }
+        thead th { padding: 13px 16px; font-weight: 500; letter-spacing: .04em; font-size: .8rem; text-transform: uppercase; }
+        tbody tr { border-bottom: 1px solid var(--border); transition: background .15s; }
+        tbody tr:last-child { border-bottom: none; }
+        tbody tr:hover { background: #f9fdf9; }
+        tbody td { padding: 13px 16px; vertical-align: middle; }
+        .product-thumb { width: 52px; height: 52px; border-radius: 8px; border: 1px solid var(--border); background: #eee; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; overflow: hidden; }
+        .product-thumb img { width: 100%; height: 100%; object-fit: cover; }
+        .badge-id { background: #e8f5e9; color: var(--green-mid); border-radius: 6px; padding: 2px 8px; font-size: .78rem; font-weight: 600; }
+        .price-cell { color: var(--red-soft); font-weight: 600; }
+        .action-btns { display: flex; gap: 8px; }
+        .btn-edit, .btn-del { border: none; border-radius: 6px; padding: 5px 12px; font-size: .82rem; font-family: 'DM Sans', sans-serif; cursor: pointer; font-weight: 500; transition: all .15s; }
+        .btn-edit { background: #e0f2fe; color: #0369a1; }
+        .btn-edit:hover { background: #bae6fd; }
+        .btn-del  { background: #fee2e2; color: #b91c1c; }
+        .btn-del:hover  { background: #fecaca; }
+        .no-result { text-align: center; padding: 40px; color: var(--text-muted); font-size: .95rem; }
+
+        /* MODAL */
+        .modal-backdrop-custom { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 200; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .2s; }
+        .modal-backdrop-custom.open { opacity: 1; pointer-events: all; }
+        .modal-box { background: #fff; border-radius: 16px; width: 500px; max-width: 95vw; padding: 32px; transform: translateY(12px); transition: transform .25s; box-shadow: 0 20px 60px rgba(0,0,0,.18); }
+        .modal-backdrop-custom.open .modal-box { transform: translateY(0); }
+        .modal-title { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--green-dark); margin-bottom: 6px; }
+        .modal-sub   { font-size: .82rem; color: var(--text-muted); margin-bottom: 24px; }
+        .form-row { margin-bottom: 14px; }
+        .form-row label { display: block; font-size: .82rem; font-weight: 500; margin-bottom: 5px; }
+        .form-row input, .form-row textarea { width: 100%; border: 1px solid var(--border); border-radius: 8px; padding: 9px 13px; font-family: 'DM Sans', sans-serif; font-size: .9rem; outline: none; transition: border .2s; resize: vertical; }
+        .form-row input:focus, .form-row textarea:focus { border-color: var(--green-light); }
+        .form-row small { color: var(--text-muted); font-size: .76rem; margin-top: 4px; display: block; }
+        .form-two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px; }
+        .btn-cancel { border: 1px solid var(--border); background: transparent; border-radius: 8px; padding: 9px 20px; font-family: 'DM Sans', sans-serif; font-size: .9rem; cursor: pointer; transition: background .15s; }
+        .btn-cancel:hover { background: var(--cream); }
+        .btn-save { background: var(--green-mid); color: #fff; border: none; border-radius: 8px; padding: 9px 24px; font-family: 'DM Sans', sans-serif; font-size: .9rem; font-weight: 500; cursor: pointer; transition: background .15s; }
+        .btn-save:hover { background: var(--green-dark); }
+
+        /* CONFIRM DELETE */
+        .confirm-box { background: #fff; border-radius: 16px; width: 380px; max-width: 95vw; padding: 28px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,.18); }
+        .confirm-icon  { font-size: 2.5rem; margin-bottom: 12px; }
+        .confirm-title { font-family: 'Playfair Display', serif; font-size: 1.15rem; margin-bottom: 8px; color: var(--green-dark); }
+        .confirm-msg   { font-size: .88rem; color: var(--text-muted); margin-bottom: 22px; }
+        .btn-confirm-del { background: var(--red-soft); color: #fff; border: none; border-radius: 8px; padding: 9px 20px; font-family: 'DM Sans', sans-serif; font-size: .9rem; font-weight: 500; cursor: pointer; transition: background .15s; }
+        .btn-confirm-del:hover { background: #c1440a; }
+
+        /* TOAST */
+        .toast-msg { position: fixed; bottom: 28px; right: 28px; background: var(--green-dark); color: #fff; padding: 12px 20px; border-radius: 10px; font-size: .88rem; opacity: 0; transform: translateY(8px); transition: all .3s; z-index: 999; pointer-events: none; }
+        .toast-msg.show { opacity: 1; transform: translateY(0); }
+
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .main { margin-left: 0; padding: 20px 16px; }
+            .stats-row { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+    <div class="sidebar-brand">
+        <span>Admin Panel</span>
+        <h1>🌸 Flower<br>Shop</h1>
+    </div>
+    <nav>
+        <a class="nav-item active" href="#">
+            <span class="icon">📦</span> Sản phẩm
+        </a>
+        <a class="nav-item" href="page6.html">
+            <span class="icon">🏠</span> Trang chủ shop
+        </a>
+    </nav>
+    <div class="sidebar-footer">© 2025 Flower Shop</div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+    <div class="topbar">
+        <div>
+            <h2>Quản lý sản phẩm</h2>
+            <p>Thêm, chỉnh sửa và xóa sản phẩm hoa</p>
+        </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="stat-icon green">📦</div>
+            <div>
+                <div class="stat-label">Tổng sản phẩm</div>
+                <div class="stat-val" id="stat-total">0</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon gold">💰</div>
+            <div>
+                <div class="stat-label">Giá thấp nhất</div>
+                <div class="stat-val" id="stat-min">0k</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon purple">💎</div>
+            <div>
+                <div class="stat-label">Giá cao nhất</div>
+                <div class="stat-val" id="stat-max">0k</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon red">📊</div>
+            <div>
+                <div class="stat-label">Giá trung bình</div>
+                <div class="stat-val" id="stat-avg">0k</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+        <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="search-input" placeholder="Tìm theo tên sản phẩm...">
+        </div>
+        <button class="btn-add" onclick="openAddModal()">＋ Thêm sản phẩm</button>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Ảnh</th>
+                    <th>Tên sản phẩm</th>
+                    <th>Giá</th>
+                    <th>Mô tả</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody id="product-table-body"></tbody>
+        </table>
+    </div>
+</main>
+
+<!-- MODAL: THÊM / SỬA -->
+<div class="modal-backdrop-custom" id="modal-form">
+    <div class="modal-box">
+        <div class="modal-title" id="modal-title">Thêm sản phẩm mới</div>
+        <div class="modal-sub"   id="modal-sub">Điền thông tin bên dưới</div>
+
+        <div class="form-two">
+            <div class="form-row">
+                <label>ID sản phẩm *</label>
+                <input type="text" id="f-id" placeholder="VD: 09">
+                <small>Phải là duy nhất (VD: 09, 10…)</small>
+            </div>
+            <div class="form-row">
+                <label>Giá (nghìn đồng) *</label>
+                <input type="number" id="f-price" placeholder="VD: 250" min="0">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <label>Tên sản phẩm *</label>
+            <input type="text" id="f-name" placeholder="VD: Hoa cúc vàng">
+        </div>
+
+        <div class="form-row">
+            <label>Đường dẫn ảnh</label>
+            <input type="text" id="f-image" placeholder="../assests/images/ten-anh.jpg">
+            <small>Để trống nếu chưa có ảnh</small>
+        </div>
+
+        <div class="form-row">
+            <label>Mô tả ngắn</label>
+            <textarea id="f-desc" rows="3" placeholder="Nhập mô tả sản phẩm..."></textarea>
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeModal('modal-form')">Hủy</button>
+            <button class="btn-save"   onclick="saveProduct()">💾 Lưu</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: XÁC NHẬN XÓA -->
+<div class="modal-backdrop-custom" id="modal-confirm">
+    <div class="confirm-box">
+        <div class="confirm-icon">🗑️</div>
+        <div class="confirm-title">Xóa sản phẩm?</div>
+        <div class="confirm-msg" id="confirm-msg">Bạn chắc chắn muốn xóa sản phẩm này?</div>
+        <div class="modal-actions" style="justify-content:center">
+            <button class="btn-cancel"      onclick="closeModal('modal-confirm')">Hủy</button>
+            <button class="btn-confirm-del" onclick="confirmDelete()">Xóa</button>
+        </div>
+    </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-msg" id="toast"></div>
+
+<script>
+// ── DỮ LIỆU – khớp hoàn toàn với page6.html & product-detail.html ──
+let productList = [
+    { id:"01", name:"Hoa hồng Pháp",    price:230, image:"../assests/images/rose1.jpg",     desc:"Hoa hồng thơm nhẹ, màu sắc rực rỡ, phù hợp trang trí và làm quà tặng." },
+    { id:"02", name:"Hoa hướng dương",   price:210, image:"../assests/images/sunflower.jpg", desc:"Hoa biểu tượng của sức sống, thân cao hướng theo ánh nắng mặt trời." },
+    { id:"03", name:"Hoa tulip",          price:240, image:"../assests/images/tulip.jpg",     desc:"Hoa sang trọng, nhiều màu sắc đẹp từ đỏ, vàng, tím đến trắng." },
+    { id:"04", name:"Cẩm tú cầu",         price:250, image:"../assests/images/camtu.jpg",     desc:"Hoa mềm mại dạng cầu, thích hợp trang trí nội thất và sự kiện." },
+    { id:"05", name:"Hoa lavender",       price:260, image:"../assests/images/lavender.jpg",  desc:"Hoa thơm dịu nhẹ, giúp thư giãn, có thể phơi khô làm túi thơm." },
+    { id:"06", name:"Hoa baby",           price:270, image:"../assests/images/baby.jpg",      desc:"Hoa nhỏ xinh trắng muốt, trang trí cực đẹp, thường dùng kết hợp bó hoa." },
+    { id:"07", name:"Hoa ly",             price:280, image:"../assests/images/ly.jpg",        desc:"Hoa sang trọng, hương thơm quyến rũ, là lựa chọn hàng đầu cho lễ cưới." },
+    { id:"08", name:"Hoa sen",            price:290, image:"../assests/images/sen.jpg",       desc:"Quốc hoa Việt Nam, thanh khiết đẹp mắt, biểu tượng của sự cao quý." }
+];
+
+let editingId  = null;
+let deletingId = null;
+let searchTerm = "";
+
+// ── RENDER ──
+function render() {
+    const filtered = productList.filter(p =>
+        p.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    const tbody = document.getElementById("product-table-body");
+
+    if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="no-result">😔 Không tìm thấy sản phẩm nào</td></tr>`;
+    } else {
+        tbody.innerHTML = filtered.map(p => `
+            <tr>
+                <td><span class="badge-id">#${p.id}</span></td>
+                <td>
+                    <div class="product-thumb">
+                        <img src="${p.image}" alt="${p.name}"
+                             onerror="this.parentElement.innerHTML='🌸'">
+                    </div>
+                </td>
+                <td><strong>${p.name}</strong></td>
+                <td class="price-cell">${p.price}k / túi</td>
+                <td style="max-width:200px;color:#6b7280;font-size:.85rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${p.desc}">${p.desc || '—'}</td>
+                <td>
+                    <div class="action-btns">
+                        <button class="btn-edit" onclick="openEditModal('${p.id}')">✏️ Sửa</button>
+                        <button class="btn-del"  onclick="openDeleteModal('${p.id}')">🗑️ Xóa</button>
+                    </div>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    // Stats
+    const prices = productList.map(p => p.price);
+    document.getElementById("stat-total").textContent = productList.length;
+    document.getElementById("stat-min").textContent   = (prices.length ? Math.min(...prices) : 0) + "k";
+    document.getElementById("stat-max").textContent   = (prices.length ? Math.max(...prices) : 0) + "k";
+    document.getElementById("stat-avg").textContent   =
+        prices.length ? Math.round(prices.reduce((a,b)=>a+b,0)/prices.length) + "k" : "0k";
+}
+
+// ── SEARCH ──
+document.getElementById("search-input").addEventListener("input", function() {
+    searchTerm = this.value;
+    render();
+});
+
+// ── MODAL HELPERS ──
+function openModal(id)  { document.getElementById(id).classList.add("open"); }
+function closeModal(id) { document.getElementById(id).classList.remove("open"); }
+
+document.querySelectorAll(".modal-backdrop-custom").forEach(el => {
+    el.addEventListener("click", function(e) {
+        if (e.target === this) this.classList.remove("open");
+    });
+});
+
+function clearForm() {
+    ["f-id","f-name","f-price","f-image","f-desc"].forEach(id => {
+        document.getElementById(id).value = "";
+    });
+}
+
+// ── THÊM ──
+function openAddModal() {
+    editingId = null;
+    clearForm();
+    document.getElementById("f-id").disabled = false;
+    document.getElementById("modal-title").textContent = "Thêm sản phẩm mới";
+    document.getElementById("modal-sub").textContent   = "Điền thông tin bên dưới";
+    openModal("modal-form");
+}
+
+// ── SỬA ──
+function openEditModal(id) {
+    const p = productList.find(x => x.id === id);
+    if (!p) return;
+    editingId = id;
+    document.getElementById("f-id").value    = p.id;
+    document.getElementById("f-id").disabled = true;
+    document.getElementById("f-name").value  = p.name;
+    document.getElementById("f-price").value = p.price;
+    document.getElementById("f-image").value = p.image;
+    document.getElementById("f-desc").value  = p.desc;
+    document.getElementById("modal-title").textContent = "Chỉnh sửa sản phẩm";
+    document.getElementById("modal-sub").textContent   = `Đang sửa: ${p.name}`;
+    openModal("modal-form");
+}
+
+// ── LƯU ──
+function saveProduct() {
+    const id    = document.getElementById("f-id").value.trim();
+    const name  = document.getElementById("f-name").value.trim();
+    const price = parseInt(document.getElementById("f-price").value);
+    const image = document.getElementById("f-image").value.trim() || "";
+    const desc  = document.getElementById("f-desc").value.trim();
+
+    if (!id || !name || isNaN(price)) {
+        showToast("⚠️ Vui lòng điền đủ ID, tên và giá!");
+        return;
+    }
+
+    if (editingId === null) {
+        if (productList.find(x => x.id === id)) {
+            showToast("⚠️ ID đã tồn tại, vui lòng chọn ID khác!");
+            return;
+        }
+        productList.push({ id, name, price, image, desc });
+        showToast("✅ Đã thêm sản phẩm thành công!");
+    } else {
+        const idx = productList.findIndex(x => x.id === editingId);
+        if (idx !== -1) productList[idx] = { id: editingId, name, price, image, desc };
+        showToast("✅ Đã cập nhật sản phẩm!");
+    }
+
+    closeModal("modal-form");
+    render();
+}
+
+// ── XÓA ──
+function openDeleteModal(id) {
+    const p = productList.find(x => x.id === id);
+    if (!p) return;
+    deletingId = id;
+    document.getElementById("confirm-msg").textContent =
+        `Bạn chắc chắn muốn xóa "${p.name}"? Hành động này không thể hoàn tác.`;
+    openModal("modal-confirm");
+}
+
+function confirmDelete() {
+    productList = productList.filter(x => x.id !== deletingId);
+    closeModal("modal-confirm");
+    render();
+    showToast("🗑️ Đã xóa sản phẩm!");
+    deletingId = null;
+}
+
+// ── TOAST ──
+function showToast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(() => t.classList.remove("show"), 2800);
+}
+
+render();
+</script>
+</body>
+</html>

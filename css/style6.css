@@ -1,0 +1,95 @@
+body{
+    background: #f4fff6;
+    font-family: Arial, sans-serif;
+}
+
+
+
+/* Breadcrumb */
+.breadcrumb a{
+    text-decoration: none;
+    color: #198754;
+    font-weight: bold;
+}
+
+
+
+/* Card sản phẩm */
+.product-card{
+    border: none;
+    border-radius: 20px;
+    overflow: hidden;
+    transition: 0.3s;
+}
+
+
+
+/* Hover */
+.product-card:hover{
+    transform: translateY(-10px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+
+
+/* Ảnh */
+.product-image{
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+}
+
+
+
+/* Nội dung */
+.card-body{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+
+
+/* Tên hoa */
+.card-title{
+    font-size: 28px;
+    font-weight: bold;
+    color: #198754;
+}
+
+
+
+/* Giá */
+.price{
+    color: red;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+
+
+/* Mô tả */
+.card-body p{
+    color: #555;
+    line-height: 1.6;
+}
+
+
+
+/* Nút */
+.btn-success{
+    border-radius: 30px;
+    padding: 10px 20px;
+    font-weight: bold;
+}
+
+
+
+/* Responsive */
+@media(max-width:768px){
+
+    .product-image{
+        height: 250px;
+    }
+
+}

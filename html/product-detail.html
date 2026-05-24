@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Chi tiết sản phẩm</title>
+
+    <!-- Link Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Dữ liệu sản phẩm (thay thế lib8.js) -->
+    <script>
+        const productList = [
+            { id: "01", name: "Hạt giống hoa hồng Pháp",  price: 230, image: "../assests/images/rose1.jpg",    productLink: "product-detail.html", desc: "Hoa hồng thơm nhẹ, màu sắc rực rỡ, phù hợp trang trí và làm quà tặng." },
+            { id: "02", name: "Hoa hướng dương",           price: 210, image: "../assests/images/sunflower.jpg",productLink: "product-detail.html", desc: "Hoa biểu tượng của sức sống, thân cao hướng theo ánh nắng mặt trời." },
+            { id: "03", name: "Hoa tulip",                 price: 240, image: "../assests/images/tulip.jpg",    productLink: "product-detail.html", desc: "Hoa sang trọng, nhiều màu sắc đẹp từ đỏ, vàng, tím đến trắng." },
+            { id: "04", name: "Hoa cẩm tú cầu",            price: 250, image: "../assests/images/camtu.jpg",    productLink: "product-detail.html", desc: "Hoa mềm mại dạng cầu, thích hợp trang trí nội thất và sự kiện." },
+            { id: "05", name: "Hoa lavender",              price: 260, image: "../assests/images/lavender.jpg", productLink: "product-detail.html", desc: "Hoa thơm dịu nhẹ, giúp thư giãn, có thể phơi khô làm túi thơm." },
+            { id: "06", name: "Hoa baby",                  price: 270, image: "../assests/images/baby.jpg",     productLink: "product-detail.html", desc: "Hoa nhỏ xinh trắng muốt, trang trí cực đẹp, thường dùng kết hợp bó hoa." },
+            { id: "07", name: "Hoa ly",                    price: 280, image: "../assests/images/ly.jpg",       productLink: "product-detail.html", desc: "Hoa sang trọng, hương thơm quyến rũ, là lựa chọn hàng đầu cho lễ cưới." },
+            { id: "08", name: "Hoa sen",                   price: 290, image: "../assests/images/sen.jpg",      productLink: "product-detail.html", desc: "Quốc hoa Việt Nam, thanh khiết đẹp mắt, biểu tượng của sự cao quý." }
+        ];
+    </script>
+</head>
+
+<body>
+
+<div class="container mt-4">
+
+    <!-- Điều hướng đơn giản -->
+    <nav>
+        <a href="page6.html" class="text-decoration-none">
+            Trang chủ
+        </a>
+        /
+        <span>Chi tiết sản phẩm</span>
+    </nav>
+
+    <hr> <!-- Đường kẻ ngang đơn giản -->
+
+    <div class="row mt-4">
+
+        <!-- Bên trái: Ảnh -->
+        <div class="col-md-5">
+
+            <img src=""
+                 id="img-detail"
+                 class="img-fluid border"
+                 alt="Ảnh sản phẩm">
+
+        </div>
+
+        <!-- Bên phải: Thông tin -->
+        <div class="col-md-7">
+
+            <h2 id="name-detail" class="fw-bold">
+                Tên sản phẩm
+            </h2>
+
+            <h4 id="price-detail" class="text-danger my-3">
+                Giá: 0đ
+            </h4>
+
+            <p class="fw-bold mb-1">
+                Mô tả sản phẩm:
+            </p>
+
+            <p id="desc-detail"
+               class="text-secondary"
+               style="text-align: justify;">
+
+                Nội dung mô tả sẽ hiển thị tại đây...
+
+            </p>
+
+            <button class="btn btn-primary mt-3">
+                Thêm vào giỏ hàng
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+    // Sử dụng URLSearchParams để lấy ID từ thanh địa chỉ (URL)
+
+    const queryString = window.location.search;
+
+    const urlParams = new URLSearchParams(queryString);
+
+    const productId = urlParams.get('id');
+    // Kết quả: "01" hoặc "02"...
+
+
+    // Tìm sản phẩm trong mảng dựa trên ID vừa lấy được
+
+    const product = productList.find(item => item.id === productId);
+
+
+    // Nếu tìm thấy sản phẩm thì đổ dữ liệu ra HTML
+
+    if (product) {
+
+        document.getElementById('name-detail').innerText =
+            product.name;
+
+        document.getElementById('price-detail').innerText =
+            `Giá: ${product.price}.000đ`;
+
+        document.getElementById('desc-detail').innerText =
+            product.desc;
+
+        document.getElementById('img-detail').src =
+            product.image;
+
+    } else {
+
+        // Trường hợp ID không tồn tại hoặc không tìm thấy
+
+        document.body.innerHTML =
+            `<div class="container mt-5">
+                <h3>Không tìm thấy sản phẩm này!</h3>
+                <a href="page6.html">
+                    Quay lại trang chủ
+                </a>
+            </div>`;
+    }
+
+</script>
+
+</body>
+</html>
